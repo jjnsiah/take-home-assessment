@@ -44,6 +44,12 @@ jobs:
         run: bash monitor.sh
         shell: bash
 
+      - name: Debugging - List Running Containers
+        run: docker ps
+
+      - name: Debugging - Check Container Logs
+        run: docker logs flask-web-app
+
       - name: Visit App via localhost
         run: |
           curl --fail http://localhost:3000 || exit 1
