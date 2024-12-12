@@ -50,6 +50,15 @@ jobs:
       - name: Debugging - Check Container Logs
         run: docker logs assessment-web-app
 
-      - name: Visit App via localhost
+      - name: Debugging - Verify Application with Curl
         run: |
-          curl --fail http://localhost:3000 || exit 1
+          for i in {1..10}; do
+            if curl -v --fail http://localhost:3000; then
+              echo "Application is running!"
+              exit 0
+            fi
+            echo "Waiting for the application to start..."
+            sleep 3
+          done
+          echo "Application failed to start."
+          exit 1
