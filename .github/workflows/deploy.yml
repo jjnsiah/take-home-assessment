@@ -48,7 +48,7 @@ jobs:
         run: docker ps
 
       - name: Debugging - Check Container Logs
-        run: docker logs flask-web-app
+        run: docker logs assessment-web-app
 
       - name: Visit App via localhost
         run: |
