@@ -1,0 +1,48 @@
+name: Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - main # trigger when pushes are made to main branch
+
+jobs:
+  ci-cd-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: | 
+          pip install -r webapp/requirements.txt
+
+      - name: Run tests
+        run: | 
+            pip install pytest pytest-cov
+            pytest --cov=webapp tests/
+          
+      - name: Stop and remove old containers
+        run: | 
+          docker rm -f assessment-web-app || true
+
+      - name: Build Docker Image
+        run: |
+          docker build -t assessment-web-app:latest .
+
+      - name: Run Container
+        run: |
+          docker run -d -p 3000:3000 --name assessment-web-app assessment-web-app:latest
+
+      - name: Check if Container is Running
+        run: bash monitor.sh
+        shell: bash
+
+      - name: Visit App via localhost
+        run: |
+          curl --fail http://localhost:3000 || exit 1
