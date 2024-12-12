@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: | 
-          ls
+          
           pip install -r webapp/requirements.txt
 
       - name: Run tests with coverage
@@ -44,21 +44,9 @@ jobs:
         run: bash monitor.sh
         shell: bash
 
-      - name: Debugging - List Running Containers
-        run: docker ps
+      - name: Wait for App to start up
+        run: sleep 20
 
-      - name: Debugging - Check Container Logs
-        run: docker logs assessment-web-app
-
-      - name: Debugging - Verify Application with Curl
+      - name: Access Application
         run: |
-          for i in {1..10}; do
-            if curl -v --fail http://localhost:3000; then
-              echo "Application is running!"
-              exit 0
-            fi
-            echo "Waiting for the application to start..."
-            sleep 3
-          done
-          echo "Application failed to start."
-          exit 1
+          curl --fail http://localhost:3000 || exit 1
